@@ -7,6 +7,9 @@ public class TrafficModel {
     private int closeOpenInterval;
     private CircularQueue roadQueue;
 
+    TimingThread timingThread = new TimingThread();
+    Thread timer = new Thread(timingThread);
+
     public TrafficModel(){
         //this.roadQueue = new CircularQueue(roadNumber);
     }
@@ -41,6 +44,7 @@ public class TrafficModel {
         switch(userOpt){
             case 0:
                 System.out.println("Bye!");
+                timer.interrupt();
                 break;
             case 1:
                 addRoad();
@@ -53,6 +57,8 @@ public class TrafficModel {
             case 3:
                 //viewSystem();
                 roadQueue.displayQueue();
+                timingThread.displayTimer();
+                //System.out.println(timingThread);
                 menu();
                 break;
         }
@@ -61,6 +67,7 @@ public class TrafficModel {
     public void enterRoadInterval(){
         Scanner scn = new Scanner(System.in);
         System.out.println("Welcome to the traffic simulator!");
+        timer.start();
 
         System.out.println("Please input road number: ");
         String userInput = scn.nextLine();
@@ -73,7 +80,6 @@ public class TrafficModel {
         setInterval(input);
 
         roadQueue = new CircularQueue(roadNumber);
-        System.out.println(roadNumber);
 
         menu();
     }
@@ -87,5 +93,6 @@ public class TrafficModel {
 
         menu();
     }
+
 
 }
