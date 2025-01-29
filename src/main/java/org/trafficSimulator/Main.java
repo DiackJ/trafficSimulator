@@ -6,6 +6,6 @@ public class Main {
         System.out.println("Hello, World!");
 
         TrafficModel model = new TrafficModel();
-        model.enterRoadInterval();
+        model.programStart();
     }
 }

@@ -1,17 +1,17 @@
 package org.trafficSimulator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class TrafficModel {
     private int roadNumber;
     private int closeOpenInterval;
     private CircularQueue roadQueue;
-
-    TimingThread timingThread = new TimingThread();
-    Thread timer = new Thread(timingThread);
+    private List<Scanner> scannerList;
 
     public TrafficModel(){
-        //this.roadQueue = new CircularQueue(roadNumber);
+        this.scannerList = new ArrayList<>();
     }
 
     public int getRoadNumber(){
@@ -20,6 +20,7 @@ public class TrafficModel {
     public void setRoadNumber(int roadNumber){
         this.roadNumber = roadNumber;
     }
+
     public int getInterval(){
         return this.closeOpenInterval;
     }
@@ -27,72 +28,116 @@ public class TrafficModel {
         this.closeOpenInterval = interval;
     }
 
+    public CircularQueue programStart(){
+        Scanner scn = new Scanner(System.in);
+        System.out.println("Welcome to the traffic simulator!\nPlease input number of roads:");
+        String input = scn.nextLine();
+        int roadInt = Integer.parseInt(input);
+        setRoadNumber(roadInt);
+
+        System.out.println("Please input the interval for road changes:");
+        input = scn.nextLine();
+        int intervalInt = Integer.parseInt(input);
+        setInterval(intervalInt);
+        scannerList.add(scn);
+
+        roadQueue = new CircularQueue(roadInt);
+
+        menu();
+
+        return roadQueue;
+    }
+
     public void menu(){
         Scanner scn = new Scanner(System.in);
+        System.out.println("""
+                Please select an option
+                Menu:
+                1.Add road\
+                2.Delete road\
+                3.View system\
+                0.Quit""");
+        String input = scn.nextLine();
+        int inputInt = Integer.parseInt(input);
 
-        System.out.println("select an option");
-        String menuOpt = "Menu\n"+
-                "1. Add road\n"+
-                "2. Delete road\n"+
-                "3. View system\n"+
-                "0. Quit";
-        System.out.println(menuOpt);
-
-        String userInput = scn.nextLine();
-        int userOpt = Integer.parseInt(userInput);
-
-        switch(userOpt){
-            case 0:
-                System.out.println("Bye!");
-                timer.interrupt();
-                break;
+        switch(inputInt){
             case 1:
-                addRoad();
+                Road newRoad = addRoad(roadQueue);
+                setRoadInterval(roadQueue, newRoad);
+                menu();
                 break;
             case 2:
-                roadQueue.dequeue();
-                System.out.println("Road deleted successfully!");
-                menu();
+                deleteRoad(roadQueue);
                 break;
             case 3:
-                //viewSystem();
-                roadQueue.displayQueue();
-                timingThread.displayTimer();
-                //System.out.println(timingThread);
-                menu();
+                openSystem(roadQueue);
+                break;
+            case 0:
+                System.out.println("Bye!");
                 break;
         }
+
+        scannerList.add(scn);
     }
 
-    public void enterRoadInterval(){
+    public Road addRoad(CircularQueue queue){
         Scanner scn = new Scanner(System.in);
-        System.out.println("Welcome to the traffic simulator!");
-        timer.start();
+        System.out.println("Please input the road to add:");
+        String roadName = scn.nextLine();
+        Road road = new Road();
+        road.setName(roadName);
+        queue.enqueue(road);
 
-        System.out.println("Please input road number: ");
-        String userInput = scn.nextLine();
-        int input = Integer.parseInt(userInput);
-        setRoadNumber(input);
+        System.out.println("Road added successfully");
 
-        System.out.println("Please input road change interval: ");
-        userInput = scn.nextLine();
-        input = Integer.parseInt(userInput);
-        setInterval(input);
+        scannerList.add(scn);
+        return road;
+    }
 
-        roadQueue = new CircularQueue(roadNumber);
+    public void setRoadInterval(CircularQueue queue, Road road){
+        for(int i = 0; i < queue.getSize(); i++){
+            if(road.equals(queue.peek())){
+                road.setInterval(getInterval());
+                road.setOpen(true);
+            }else{
+                road.setInterval(getInterval() * i);
+                road.setOpen(false);
+            }
+        }
+        //queue.resetQueue(getInterval());
+    }
 
+    public void deleteRoad(CircularQueue queue){//, Road road){
+        queue.dequeue();
+
+        queue.resetQueue(getInterval());
+        System.out.println("Road deleted successfully");
+
+        //return queue;
         menu();
     }
 
-    public void addRoad(){
+
+    public void openSystem(CircularQueue queue){
+        System.out.println("Roads: " + queue.getSize()+"\nInterval: " + getInterval());
+        //queue.display();
+
+
+        queue.runTraffic(getInterval());
+
+        /*TimingThread timer = new TimingThread(queue);
+        Thread thread = new Thread(timer);
+        thread.start();
+
+        boolean alive = !thread.isAlive();*/
+        System.out.println("press any key to return to menu");
         Scanner scn = new Scanner(System.in);
-        System.out.println("please enter a road name: ");
         String input = scn.nextLine();
-        roadQueue.enqueue(input);
-        System.out.println("Road added successfully!");
+        if(input != null){
 
-        menu();
+            menu();
+        }
+       // menu();
     }
-
 
 }
