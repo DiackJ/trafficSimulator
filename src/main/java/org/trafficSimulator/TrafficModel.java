@@ -3,6 +3,7 @@ package org.trafficSimulator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Timer;
 
 public class TrafficModel {
     private int roadNumber;
@@ -123,18 +124,13 @@ public class TrafficModel {
         //queue.display();
 
 
-        queue.runTraffic(getInterval());
+        Timer timer = queue.runTraffic(getInterval());
 
-        /*TimingThread timer = new TimingThread(queue);
-        Thread thread = new Thread(timer);
-        thread.start();
-
-        boolean alive = !thread.isAlive();*/
         System.out.println("press any key to return to menu");
         Scanner scn = new Scanner(System.in);
         String input = scn.nextLine();
         if(input != null){
-
+            timer.cancel();
             menu();
         }
        // menu();

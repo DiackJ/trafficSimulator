@@ -117,81 +117,45 @@ public class CircularQueue {
         return size;
     }
 
-    public void runTraffic(int interval){
-        try {
+    public Timer runTraffic(int interval){
+        //try {
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
+
                 @Override
-                public void run(){
+                public void run() {
                     StringBuilder string = new StringBuilder();
-                    for(int i = 0; i < queue.length; i++){
-                        int index = (front + i) % capacity;
-                        queue[index].decrementInterval();
-                        string.append(queue[index].getName())
-                                .append(" is ")
-                                .append(queue[index].getOpen() ? "open" : "closed")
-                                .append(" for ")
-                                .append(queue[index].getInterval())
-                                .append("s ");
-                    }
-                    if(queue[front].intIsZero()){
-                        rotate(); //move front to back
-                        resetQueue(interval); //reset the intervals
-                    }
-                    System.out.print("\r"+string);
-                }
-            },0, 1000);
+                        for (int i = 0; i < queue.length; i++) { //loop through queue
+                            int index = (front + i) % capacity; //calculate logical position of each element
+                            queue[index].decrementInterval(); //decrease interval of each element by 1
+                            string.append(queue[index].getName()) //build string
+                                    .append(" is ")
+                                    .append(queue[index].equals(queue[front]) ? "open" : "closed")
+                                    .append(" for ")
+                                    .append(queue[index].getInterval())
+                                    .append("s ");
+                        }
+                        if (queue[front].intIsZero()) { //once the front (open) element has interval of 0
+                            rotate(); //move front to back
+                            resetQueue(interval); //reset the intervals
+                        }
+
+                        System.out.print("\r" + string);
+
+                }//run()
+
+            },0, 1000); //every second
 
             //runTraffic(interval);
-        }catch(NullPointerException e){
-            e.fillInStackTrace();
-        }
+        //}catch(NullPointerException e){
+          // e.fillInStackTrace();
+        //}
+        return timer;
     }
 
-    /*public void runTraffic() {
-        try {
-            while (true) { // Infinite loop to continuously process the queue
-                StringBuilder systemString = new StringBuilder();
-                Road roadf = null;
-
-                // Step 1: Decrement intervals for all elements
-                for (int i = 0; i < queue.length; i++) {
-                    int road = (front + i) % capacity;
-                    roadf = queue[road];
-                    queue[road].decrementInterval();
-
-                    // Build the system string for display
-                    systemString.append(queue[road].getName())
-                            .append(" is ")
-                            .append(queue[road].getOpen() ? "open" : "closed")
-                            .append(" for ")
-                            .append(queue[road].getInterval())
-                            .append("s ");
-
-                    if (queue[front].intIsZero()) {
-                        // Rotate and reset
-                        rotate();
-                        resetQueue(roadf.getInterval()); // Reset all intervals to the interval of the rotated element
-                    }
-                    System.out.print("\r" + systemString);
-                }
-
-                // Step 2: Print all intervals at once
-                //System.out.print("\r" + systemString);
-
-                // Step 3: Check if the front element reached 0
-                /*if (queue[front].intIsZero()) {
-                    // Rotate and reset
-                    rotate();
-                    resetQueue(roadf.getInterval()); // Reset all intervals to the interval of the rotated element
-                }
-
-                // Pause for 1 second before next iteration
-                Thread.sleep(1000);
-            }
-        } catch (NullPointerException | InterruptedException e) {
-            e.fillInStackTrace();
-        }*/
+    public void cancelTimer(Timer timer){
+        timer.cancel();
     }
+}
 
 
