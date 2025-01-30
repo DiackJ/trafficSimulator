@@ -45,7 +45,4 @@ public class Road {
     public boolean intIsZero(){
         return interval == 0;
     }
-
-
-
 }

@@ -91,7 +91,6 @@ public class CircularQueue {
                 @Override
                 public void run() {
                     StringBuilder string = new StringBuilder();
-                    boolean isOpen = false;
                     String RED = "\u001B[31m";
                     String GREEN = "\u001B[32m";
                         for (int i = 0; i < size; i++) { //loop through queue

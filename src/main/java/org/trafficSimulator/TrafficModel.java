@@ -9,7 +9,7 @@ public class TrafficModel {
     private int roadNumber;
     private int closeOpenInterval;
     private CircularQueue roadQueue;
-    private List<Scanner> scannerList;
+    private final List<Scanner> scannerList;
 
     public TrafficModel(){
         this.scannerList = new ArrayList<>();
@@ -54,9 +54,9 @@ public class TrafficModel {
                 Please select an option
                 Menu:
                 1.Add road\
-                 2.Delete road\
-                 3.View system\
-                 0.Quit""");
+                \n2.Delete road\
+                \n3.View system\
+                \n0.Quit""");
         String input = scn.nextLine();
         int inputInt = Integer.parseInt(input);
 
@@ -109,7 +109,7 @@ public class TrafficModel {
         }
     }
 
-    public void deleteRoad(CircularQueue queue){//, Road road){
+    public void deleteRoad(CircularQueue queue){
         queue.dequeue();
 
         queue.resetQueue(getInterval());
@@ -132,5 +132,4 @@ public class TrafficModel {
             menu();
         }
     }
-
 }
