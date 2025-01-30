@@ -2,7 +2,7 @@ package org.trafficSimulator;
 
 public class Road {
     private String name;
-    private boolean isOpen;
+    private String state;
     private int interval;
 
     public Road(){}
@@ -18,11 +18,11 @@ public class Road {
         this.name = name;
     }
 
-    public boolean getOpen(){
-        return this.isOpen;
+    public String getState(){
+        return this.state;
     }
-    public void setOpen(boolean isOpen){
-        this.isOpen = isOpen;
+    public void setState(String state){
+        this.state = state;
     }
 
     public int getInterval(){

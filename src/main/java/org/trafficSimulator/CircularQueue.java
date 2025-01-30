@@ -49,25 +49,6 @@ public class CircularQueue {
         return road;
     }
 
-    public void display(){
-        if(isEmpty()){
-            System.out.println("queue is empty");
-            return;
-        }
-
-        String open = "open";
-        String closed = "closed";
-
-        try {
-            for (int i = 0; i < queue.length; i++) {
-                System.out.println("\r" +queue[(front + i) % capacity].getName() + " is " + (queue[i].getOpen() ? open : closed) + " for " + queue[i].getInterval() + "s ");
-                //System.out.print(queue[(front + i) % capacity].getInterval() + " ");
-            }
-        }catch(NullPointerException e){
-            e.getStackTrace();
-        }
-    }
-
     public Road peek(){
         if(isEmpty()){
             System.out.println("queue is empty");
@@ -75,20 +56,6 @@ public class CircularQueue {
         }
 
         return queue[front];
-    }
-
-    public Road getCurrent(){
-        for(int i = 0; i < queue.length; i++){
-            return queue[(front + 1) % capacity];
-        }
-        return null;
-    }
-
-    public Road getRoad(){
-        for(int i = 0; i < queue.length; i++){
-            return queue[i];
-        }
-        return null;
     }
 
     public void rotate(){
@@ -100,7 +67,7 @@ public class CircularQueue {
 
     public void resetQueue(int interval){
         try {
-            for (int i = 0; i < queue.length; i++) {
+            for (int i = 0; i < size; i++) {
                 int index = (front + i) % capacity;
                 if (queue[index].equals(queue[front])) {
                     queue[index].setInterval(interval);
@@ -118,43 +85,54 @@ public class CircularQueue {
     }
 
     public Timer runTraffic(int interval){
-        //try {
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
 
                 @Override
                 public void run() {
                     StringBuilder string = new StringBuilder();
-                        for (int i = 0; i < queue.length; i++) { //loop through queue
-                            int index = (front + i) % capacity; //calculate logical position of each element
-                            queue[index].decrementInterval(); //decrease interval of each element by 1
-                            string.append(queue[index].getName()) //build string
+                    boolean isOpen = false;
+                    String RED = "\u001B[31m";
+                    String GREEN = "\u001B[32m";
+                        for (int i = 0; i < size; i++) { //loop through queue
+                            int index = (front + i) % capacity;//calculate logical position of each element
+                            Road road = queue[index];
+                            //allows user to declare queue with larger capacity than elements initially added
+                            //and helps intervals properly reset after deletion
+                            if(road == null) continue;
+
+                            if(road == queue[front]){
+                                road.setState("open");
+                                string.append(GREEN); //set string color to green
+
+                            }else{
+                                road.setState("closed");
+                                string.append(RED); //set string color to red
+                            }
+
+                            road.decrementInterval(); //decrease interval of each element by 1
+                            string.append(road.getName()) //build string
                                     .append(" is ")
-                                    .append(queue[index].equals(queue[front]) ? "open" : "closed")
+                                    .append(road.getState())
                                     .append(" for ")
-                                    .append(queue[index].getInterval())
-                                    .append("s ");
+                                    .append(road.getInterval())
+                                    .append("s ")
+                                    .append("\u001B[0m");//reset color back to white after exit
+
                         }
-                        if (queue[front].intIsZero()) { //once the front (open) element has interval of 0
+                        if (queue[front] != null && queue[front].intIsZero()){//once the front (open) element has interval of 0
                             rotate(); //move front to back
                             resetQueue(interval); //reset the intervals
                         }
 
                         System.out.print("\r" + string);
 
+
                 }//run()
 
             },0, 1000); //every second
 
-            //runTraffic(interval);
-        //}catch(NullPointerException e){
-          // e.fillInStackTrace();
-        //}
         return timer;
-    }
-
-    public void cancelTimer(Timer timer){
-        timer.cancel();
     }
 }
 

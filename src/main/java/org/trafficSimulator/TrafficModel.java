@@ -29,7 +29,7 @@ public class TrafficModel {
         this.closeOpenInterval = interval;
     }
 
-    public CircularQueue programStart(){
+    public void programStart(){
         Scanner scn = new Scanner(System.in);
         System.out.println("Welcome to the traffic simulator!\nPlease input number of roads:");
         String input = scn.nextLine();
@@ -46,7 +46,6 @@ public class TrafficModel {
 
         menu();
 
-        return roadQueue;
     }
 
     public void menu(){
@@ -75,6 +74,9 @@ public class TrafficModel {
                 break;
             case 0:
                 System.out.println("Bye!");
+                for(Scanner scns : scannerList){
+                    scns.close();
+                }
                 break;
         }
 
@@ -99,13 +101,12 @@ public class TrafficModel {
         for(int i = 0; i < queue.getSize(); i++){
             if(road.equals(queue.peek())){
                 road.setInterval(getInterval());
-                road.setOpen(true);
+                road.setState("open");
             }else{
                 road.setInterval(getInterval() * i);
-                road.setOpen(false);
+                road.setState("closed");
             }
         }
-        //queue.resetQueue(getInterval());
     }
 
     public void deleteRoad(CircularQueue queue){//, Road road){
@@ -114,15 +115,12 @@ public class TrafficModel {
         queue.resetQueue(getInterval());
         System.out.println("Road deleted successfully");
 
-        //return queue;
         menu();
     }
 
 
     public void openSystem(CircularQueue queue){
         System.out.println("Roads: " + queue.getSize()+"\nInterval: " + getInterval());
-        //queue.display();
-
 
         Timer timer = queue.runTraffic(getInterval());
 
@@ -133,7 +131,6 @@ public class TrafficModel {
             timer.cancel();
             menu();
         }
-       // menu();
     }
 
 }
