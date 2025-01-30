@@ -54,9 +54,9 @@ public class TrafficModel {
                 Please select an option
                 Menu:
                 1.Add road\
-                2.Delete road\
-                3.View system\
-                0.Quit""");
+                 2.Delete road\
+                 3.View system\
+                 0.Quit""");
         String input = scn.nextLine();
         int inputInt = Integer.parseInt(input);
 
