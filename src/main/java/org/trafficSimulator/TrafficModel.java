@@ -15,12 +15,9 @@ public class TrafficModel {
         this.scannerList = new ArrayList<>();
     }
 
-    public int getRoadNumber(){
-        return this.roadNumber;
-    }
-    public void setRoadNumber(int roadNumber){
-        this.roadNumber = roadNumber;
-    }
+//    public void setRoadNumber(int roadNumber){
+//        this.roadNumber = roadNumber;
+//    }
 
     public int getInterval(){
         return this.closeOpenInterval;
@@ -34,7 +31,7 @@ public class TrafficModel {
         System.out.println("Welcome to the traffic simulator!\nPlease input number of roads:");
         String input = scn.nextLine();
         int roadInt = Integer.parseInt(input);
-        setRoadNumber(roadInt);
+        //setRoadNumber(roadInt);
 
         System.out.println("Please input the interval for road changes:");
         input = scn.nextLine();
@@ -45,7 +42,6 @@ public class TrafficModel {
         roadQueue = new CircularQueue(roadInt);
 
         menu();
-
     }
 
     public void menu(){
@@ -61,18 +57,18 @@ public class TrafficModel {
         int inputInt = Integer.parseInt(input);
 
         switch(inputInt){
-            case 1:
+            case 1: //add road to queue and set interval according to position
                 Road newRoad = addRoad(roadQueue);
                 setRoadInterval(roadQueue, newRoad);
                 menu();
                 break;
-            case 2:
+            case 2: //delete the first road in the queue
                 deleteRoad(roadQueue);
                 break;
-            case 3:
+            case 3: //view system stats and traffic flow
                 openSystem(roadQueue);
                 break;
-            case 0:
+            case 0: //quit system and close all input scanners
                 System.out.println("Bye!");
                 for(Scanner scns : scannerList){
                     scns.close();
@@ -83,6 +79,7 @@ public class TrafficModel {
         scannerList.add(scn);
     }
 
+//take user input for road name and add to queue
     public Road addRoad(CircularQueue queue){
         Scanner scn = new Scanner(System.in);
         System.out.println("Please input the road to add:");
@@ -97,18 +94,20 @@ public class TrafficModel {
         return road;
     }
 
+//set intervals according to position in queue
     public void setRoadInterval(CircularQueue queue, Road road){
         for(int i = 0; i < queue.getSize(); i++){
-            if(road.equals(queue.peek())){
+            if(road.equals(queue.peek())){ //front road
                 road.setInterval(getInterval());
                 road.setState("open");
-            }else{
+            }else{ //every other road
                 road.setInterval(getInterval() * i);
                 road.setState("closed");
             }
         }
     }
 
+//remove front road (as per queue rules) and reset intervals of remaining roads and return to menu
     public void deleteRoad(CircularQueue queue){
         queue.dequeue();
 
@@ -118,13 +117,13 @@ public class TrafficModel {
         menu();
     }
 
-
+//prints road and interval info, initiates timer to see traffic flow, when user is ready...cancels timer and goes back to menu
     public void openSystem(CircularQueue queue){
         System.out.println("Roads: " + queue.getSize()+"\nInterval: " + getInterval());
 
         Timer timer = queue.runTraffic(getInterval());
 
-        System.out.println("press any key to return to menu");
+        System.out.println("press enter to return to menu");
         Scanner scn = new Scanner(System.in);
         String input = scn.nextLine();
         if(input != null){

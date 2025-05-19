@@ -6,7 +6,7 @@ import java.util.TimerTask;
 public class CircularQueue {
     private int front;
     private int rear;
-    private int capacity;
+    private final int capacity;
     private int size;
     private Road[] queue;
 
@@ -58,6 +58,10 @@ public class CircularQueue {
         return queue[front];
     }
 
+    public int getSize(){
+        return size;
+    }
+
     public void rotate(){
         if(!isEmpty()){
             Road road = dequeue();
@@ -80,10 +84,6 @@ public class CircularQueue {
         }
     }
 
-    public int getSize(){
-        return size;
-    }
-
     public Timer runTraffic(int interval){
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
@@ -100,11 +100,11 @@ public class CircularQueue {
                             //and helps intervals properly reset after deletion
                             if(road == null) continue;
 
-                            if(road == queue[front]){
+                            if(road == queue[front]){ //first road in queue
                                 road.setState("open");
                                 string.append(GREEN); //set string color to green
 
-                            }else{
+                            }else{ //all other roads
                                 road.setState("closed");
                                 string.append(RED); //set string color to red
                             }
