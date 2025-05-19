@@ -28,13 +28,16 @@ thought it would be beneficial to improve my logical problem-solving skills.
 > 
 > cd TrafficSimulator
 
-**2. Navigate to the 'Main' file**
-- navigate to: 
-  > /src/main/java/org/Main.java
+**2. Compile and run**
 
--run the file:
-  > javac Main.java
-  > java Main
+- navigate to 
+>\TrafficSimulator\src\main\java\org\trafficSimulator
+- compile all the files: 
+  > javac CircularQueue.java Main.java Road.java TrafficModel.java
+- navigate back to the root directory  
+  >\TrafficSimulator
+- run the program 
+  > java -cp src/main/java org.trafficSimulator.Main
   
 ## Stack and Features
 
